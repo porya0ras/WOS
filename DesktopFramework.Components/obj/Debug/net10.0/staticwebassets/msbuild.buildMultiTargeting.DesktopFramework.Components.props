@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="../build/DesktopFramework.Components.props" />
-</Project>
