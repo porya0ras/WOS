@@ -1,0 +1,32 @@
+@implements IDisposable
+@* Sample single-instance app: theme settings. *@
+
+<div class="wos-app-pad">
+    <h2>Settings</h2>
+
+    <h3>Appearance</h3>
+    <label>
+        <input type="checkbox"
+               checked="@(Theme.Current == DesktopTheme.Dark)"
+               @onchange="OnToggleDark" />
+        Dark mode
+    </label>
+
+    <p style="margin-top:16px; color:var(--wos-text-muted);">
+        This window is single-instance: opening Settings again focuses this window
+        instead of creating a new one.
+    </p>
+</div>
+
+@code {
+    [Inject] private ThemeService Theme { get; set; } = default!;
+
+    protected override void OnInitialized() => Theme.Changed += OnChanged;
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    private Task OnToggleDark(ChangeEventArgs e) =>
+        Theme.SetThemeAsync((bool)e.Value! ? DesktopTheme.Dark : DesktopTheme.Light);
+
+    public void Dispose() => Theme.Changed -= OnChanged;
+}

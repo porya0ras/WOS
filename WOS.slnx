@@ -1,0 +1,10 @@
+<Solution>
+  <Project Path="DesktopFramework.Api/DesktopFramework.Api.csproj" />
+  <Project Path="DesktopFramework.AppHost/DesktopFramework.AppHost.csproj" />
+  <Project Path="DesktopFramework.Components/DesktopFramework.Components.csproj" />
+  <Project Path="DesktopFramework.Contracts/DesktopFramework.Contracts.csproj" />
+  <Project Path="DesktopFramework.Core/DesktopFramework.Core.csproj" />
+  <Project Path="DesktopFramework.SampleApps/DesktopFramework.SampleApps.csproj" />
+  <Project Path="DesktopFramework.ServiceDefaults/DesktopFramework.ServiceDefaults.csproj" />
+  <Project Path="DesktopFramework.Web/DesktopFramework.Web.csproj" />
+</Solution>

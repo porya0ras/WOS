@@ -1,0 +1,43 @@
+@* Window chrome title bar: icon + title (drag source) + min/max/close buttons. *@
+
+<div class="wos-window__titlebar" data-wos-drag-handle
+     @ondblclick="OnTitleDoubleClick">
+    @if (!string.IsNullOrEmpty(Window.Icon))
+    {
+        <Icon Name="@Window.Icon" CssClass="wos-window__icon" />
+    }
+    <span class="wos-window__title">@Window.Title</span>
+
+    <div class="wos-window__buttons" data-wos-no-drag>
+        @if (Window.Options.Minimizable)
+        {
+            <button class="wos-winbtn" title="Minimize" @onclick="() => Windows.Minimize(Window.Id)">
+                <i class="fa-solid fa-window-minimize" aria-hidden="true"></i>
+            </button>
+        }
+        @if (Window.Options.Maximizable)
+        {
+            <button class="wos-winbtn" title="@(Window.IsMaximized ? "Restore" : "Maximize")"
+                    @onclick="() => Windows.ToggleMaximize(Window.Id)">
+                <i class="fa-solid @(Window.IsMaximized ? "fa-window-restore" : "fa-window-maximize")" aria-hidden="true"></i>
+            </button>
+        }
+        @if (Window.Options.Closable)
+        {
+            <button class="wos-winbtn wos-winbtn--close" title="Close" @onclick="() => Windows.Close(Window.Id)">
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public WindowInstance Window { get; set; } = default!;
+    [Inject] private WindowManager Windows { get; set; } = default!;
+
+    private void OnTitleDoubleClick()
+    {
+        if (Window.Options.Maximizable)
+            Windows.ToggleMaximize(Window.Id);
+    }
+}

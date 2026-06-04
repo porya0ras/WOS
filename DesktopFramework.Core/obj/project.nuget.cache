@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "9Vzw0vd98TU=",
+  "success": true,
+  "projectFilePath": "/home/haleh/Documents/My Projects/WOS/DesktopFramework.Core/DesktopFramework.Core.csproj",
+  "expectedPackageFiles": [
+    "/home/haleh/.nuget/packages/microsoft.extensions.dependencyinjection.abstractions/10.0.8/microsoft.extensions.dependencyinjection.abstractions.10.0.8.nupkg.sha512"
+  ],
+  "logs": []
+}

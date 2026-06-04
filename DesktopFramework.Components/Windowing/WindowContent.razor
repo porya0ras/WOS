@@ -1,0 +1,26 @@
+@* Hosts the app body via DynamicComponent, passing the launch parameters
+   (keys must match the target component's [Parameter] names — plan §10). *@
+
+<div class="wos-window__content">
+    <DynamicComponent Type="Window.ComponentType" Parameters="_parameters" @ref="_dynamic" />
+</div>
+
+@code {
+    [Parameter, EditorRequired] public WindowInstance Window { get; set; } = default!;
+
+    private DynamicComponent? _dynamic;
+    private Dictionary<string, object> _parameters = new();
+
+    protected override void OnParametersSet()
+    {
+        // DynamicComponent wants IDictionary<string, object>; project the instance's params.
+        _parameters = Window.Parameters.ToDictionary(kvp => kvp.Key, kvp => kvp.Value!);
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        // Give IDesktopApp components a handle to their window.
+        if (_dynamic?.Instance is IDesktopApp app && app.Window is null)
+            app.Window = Window;
+    }
+}

@@ -1,0 +1,18 @@
+@* Sample multi-instance app: demonstrates passing a parameter (CustomerId) into
+   a window. Opening different ids yields separate windows (plan §10, §15). *@
+
+<div class="wos-app-pad">
+    <h2>Customer #@CustomerId</h2>
+    <p>This is a multi-instance app. Each customer opens in its own window.</p>
+
+    <dl>
+        <dt><strong>Id</strong></dt>
+        <dd>@CustomerId</dd>
+        <dt><strong>Name</strong></dt>
+        <dd>@($"Customer {CustomerId}")</dd>
+    </dl>
+</div>
+
+@code {
+    [Parameter] public int CustomerId { get; set; }
+}

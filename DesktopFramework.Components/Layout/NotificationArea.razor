@@ -1,0 +1,46 @@
+@implements IDisposable
+@* Notification panel bound to GET /api/notifications. *@
+
+@if (State.IsNotificationPanelOpen)
+{
+    <div class="wos-notify" @onclick:stopPropagation="true">
+        <div class="wos-notify__title">Notifications</div>
+        <div class="wos-notify__list">
+            @if (_notifications.Count == 0)
+            {
+                <p class="wos-notify__item-msg">No notifications.</p>
+            }
+            @foreach (var n in _notifications)
+            {
+                <div class="wos-notify__item wos-notify__item--@n.Severity" @key="n.Id">
+                    <div class="wos-notify__item-title">@n.Title</div>
+                    <div class="wos-notify__item-msg">@n.Message</div>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Inject] private DesktopStateService State { get; set; } = default!;
+    [Inject] private IDesktopContentService Content { get; set; } = default!;
+
+    private IReadOnlyList<NotificationDto> _notifications = [];
+    private bool _loaded;
+
+    protected override void OnInitialized() => State.Changed += OnStateChanged;
+
+    private async void OnStateChanged()
+    {
+        // Lazy-load notifications the first time the panel opens.
+        if (State.IsNotificationPanelOpen && !_loaded)
+        {
+            _loaded = true;
+            try { _notifications = await Content.GetNotificationsAsync(); }
+            catch { /* API unavailable — show empty */ }
+        }
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose() => State.Changed -= OnStateChanged;
+}

@@ -1,0 +1,18 @@
+@implements IDisposable
+@* Renders every open window. Each AppWindow keys on its Id so Blazor preserves
+   component state across re-renders (and while minimized). *@
+
+@foreach (var window in Windows.Windows)
+{
+    <AppWindow @key="window.Id" Window="window" />
+}
+
+@code {
+    [Inject] private WindowManager Windows { get; set; } = default!;
+
+    protected override void OnInitialized() => Windows.Changed += OnChanged;
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Windows.Changed -= OnChanged;
+}

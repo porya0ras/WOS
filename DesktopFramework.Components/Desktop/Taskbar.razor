@@ -1,0 +1,70 @@
+@implements IDisposable
+@* Start button + a button per open window (active highlighted) + system tray. *@
+
+<div class="wos-taskbar">
+    <button class="wos-start-btn" title="Start" @onclick="State.ToggleStartMenu">
+        <i class="fa-brands fa-windows" aria-hidden="true"></i>
+    </button>
+
+    <div class="wos-taskbar__items">
+        @foreach (var w in Windows.Windows.Where(w => w.Options.ShowInTaskbar))
+        {
+            <button class="wos-task @(w.IsActive && !w.IsMinimized ? "is-active" : null)"
+                    @key="w.Id"
+                    title="@w.Title"
+                    @onclick="() => OnTaskClick(w)">
+                @if (!string.IsNullOrEmpty(w.Icon))
+                {
+                    <Icon Name="@w.Icon" />
+                }
+                <span class="wos-task__label">@w.Title</span>
+            </button>
+        }
+    </div>
+
+    <div class="wos-tray">
+        <button class="wos-tray__btn" title="Toggle theme" @onclick="ToggleTheme">
+            <i class="fa-solid @(Theme.Current == DesktopTheme.Dark ? "fa-moon" : "fa-sun")" aria-hidden="true"></i>
+        </button>
+        <button class="wos-tray__btn" title="Notifications" @onclick="State.ToggleNotificationPanel">
+            <i class="fa-solid fa-bell" aria-hidden="true"></i>
+        </button>
+        <div class="wos-tray__clock">
+            <div>@DateTime.Now.ToString("HH:mm")</div>
+            <div>@DateTime.Now.ToString("yyyy-MM-dd")</div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject] private WindowManager Windows { get; set; } = default!;
+    [Inject] private DesktopStateService State { get; set; } = default!;
+    [Inject] private ThemeService Theme { get; set; } = default!;
+
+    protected override void OnInitialized()
+    {
+        Windows.Changed += OnChanged;
+        State.Changed += OnChanged;
+        Theme.Changed += OnChanged;
+    }
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    private void OnTaskClick(WindowInstance w)
+    {
+        // Active & visible → minimize (toggle). Otherwise focus (restores if minimized).
+        if (w.IsActive && !w.IsMinimized)
+            Windows.Minimize(w.Id);
+        else
+            Windows.Focus(w.Id);
+    }
+
+    private Task ToggleTheme() => Theme.ToggleDarkModeAsync();
+
+    public void Dispose()
+    {
+        Windows.Changed -= OnChanged;
+        State.Changed -= OnChanged;
+        Theme.Changed -= OnChanged;
+    }
+}

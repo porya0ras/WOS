@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../build/DesktopFramework.SampleApps.props" />
+</Project>

@@ -1,0 +1,22 @@
+@* A launchable app shown on the desktop. Double-click (default) opens it. *@
+
+<div class="wos-icon" tabindex="0"
+     @ondblclick="Open"
+     @onkeydown="OnKeyDown"
+     title="@App.Title">
+    <Icon Name="@(App.Icon ?? "fa-solid fa-cube")" CssClass="wos-icon__glyph" />
+    <span class="wos-icon__label">@App.Title</span>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public AppDescriptor App { get; set; } = default!;
+    [Inject] private WindowManager Windows { get; set; } = default!;
+
+    private void Open() => Windows.OpenApp(App.Id);
+
+    private void OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key is "Enter" or " ")
+            Open();
+    }
+}

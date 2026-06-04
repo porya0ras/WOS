@@ -1,0 +1,12 @@
+/home/haleh/Documents/My Projects/WOS/DesktopFramework.ServiceDefaults/bin/Debug/net10.0/DesktopFramework.ServiceDefaults.deps.json
+/home/haleh/Documents/My Projects/WOS/DesktopFramework.ServiceDefaults/bin/Debug/net10.0/DesktopFramework.ServiceDefaults.dll
+/home/haleh/Documents/My Projects/WOS/DesktopFramework.ServiceDefaults/bin/Debug/net10.0/DesktopFramework.ServiceDefaults.pdb
+/home/haleh/Documents/My Projects/WOS/DesktopFramework.ServiceDefaults/obj/Debug/net10.0/DesktopFramework.ServiceDefaults.csproj.AssemblyReference.cache
+/home/haleh/Documents/My Projects/WOS/DesktopFramework.ServiceDefaults/obj/Debug/net10.0/DesktopFramework.ServiceDefaults.GeneratedMSBuildEditorConfig.editorconfig
+/home/haleh/Documents/My Projects/WOS/DesktopFramework.ServiceDefaults/obj/Debug/net10.0/DesktopFramework.ServiceDefaults.AssemblyInfoInputs.cache
+/home/haleh/Documents/My Projects/WOS/DesktopFramework.ServiceDefaults/obj/Debug/net10.0/DesktopFramework.ServiceDefaults.AssemblyInfo.cs
+/home/haleh/Documents/My Projects/WOS/DesktopFramework.ServiceDefaults/obj/Debug/net10.0/DesktopFramework.ServiceDefaults.csproj.CoreCompileInputs.cache
+/home/haleh/Documents/My Projects/WOS/DesktopFramework.ServiceDefaults/obj/Debug/net10.0/DesktopFramework.ServiceDefaults.dll
+/home/haleh/Documents/My Projects/WOS/DesktopFramework.ServiceDefaults/obj/Debug/net10.0/refint/DesktopFramework.ServiceDefaults.dll
+/home/haleh/Documents/My Projects/WOS/DesktopFramework.ServiceDefaults/obj/Debug/net10.0/DesktopFramework.ServiceDefaults.pdb
+/home/haleh/Documents/My Projects/WOS/DesktopFramework.ServiceDefaults/obj/Debug/net10.0/ref/DesktopFramework.ServiceDefaults.dll

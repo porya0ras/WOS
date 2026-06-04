@@ -1,0 +1,19 @@
+@page "/"
+@rendermode InteractiveServer
+@using DesktopFramework.Components.Desktop
+@using DesktopFramework.Core.Services
+@using DesktopFramework.SampleApps
+@inject AppRegistry Registry
+
+<PageTitle>WOS — Web Desktop</PageTitle>
+
+<DesktopShell />
+
+@code {
+    protected override void OnInitialized()
+    {
+        // The Web project is the composition root: it registers the apps,
+        // supplying each app's ComponentType (which the API catalog can't carry).
+        Registry.RegisterSampleApps();
+    }
+}

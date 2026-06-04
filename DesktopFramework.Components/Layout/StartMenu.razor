@@ -1,0 +1,62 @@
+@implements IDisposable
+@* App launcher: search box + apps grouped by category. *@
+
+@if (State.IsStartMenuOpen)
+{
+    <div class="wos-startmenu" @onclick:stopPropagation="true">
+        <input class="wos-startmenu__search"
+               placeholder="Search apps..."
+               @bind="_search" @bind:event="oninput" />
+
+        <div class="wos-startmenu__list">
+            @foreach (var group in FilteredApps)
+            {
+                <div class="wos-startmenu__group">@group.Key</div>
+                @foreach (var app in group)
+                {
+                    <button class="wos-startmenu__item" @key="app.Id" @onclick="() => Launch(app)">
+                        <Icon Name="@(app.Icon ?? "fa-solid fa-cube")" CssClass="wos-startmenu__item-glyph" />
+                        <span>@app.Title</span>
+                    </button>
+                }
+            }
+        </div>
+    </div>
+}
+
+@code {
+    [Inject] private AppRegistry Registry { get; set; } = default!;
+    [Inject] private WindowManager Windows { get; set; } = default!;
+    [Inject] private DesktopStateService State { get; set; } = default!;
+
+    private string _search = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        State.Changed += OnChanged;
+        Registry.Changed += OnChanged;
+    }
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    private IEnumerable<IGrouping<DesktopAppCategory, AppDescriptor>> FilteredApps =>
+        Registry.StartMenuApps
+            .Where(a => string.IsNullOrWhiteSpace(_search)
+                        || a.Title.Contains(_search, StringComparison.OrdinalIgnoreCase)
+                        || a.Category.ToString().Contains(_search, StringComparison.OrdinalIgnoreCase))
+            .GroupBy(a => a.Category)
+            .OrderBy(g => g.Key);
+
+    private void Launch(AppDescriptor app)
+    {
+        Windows.OpenApp(app.Id);
+        _search = string.Empty;
+        State.CloseAllMenus();
+    }
+
+    public void Dispose()
+    {
+        State.Changed -= OnChanged;
+        Registry.Changed -= OnChanged;
+    }
+}

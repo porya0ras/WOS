@@ -1,0 +1,29 @@
+@implements IDisposable
+@* The wallpaper surface: hosts desktop icons, the welcome widget, and the
+   open windows. Clicking empty space closes transient menus. *@
+
+<div class="wos-desktop" @onclick="OnDesktopClick">
+    <div class="wos-icons">
+        @foreach (var app in Registry.DesktopApps)
+        {
+            <DesktopIcon @key="app.Id" App="app" />
+        }
+    </div>
+
+    <WelcomeWidget />
+
+    <WindowHost />
+</div>
+
+@code {
+    [Inject] private AppRegistry Registry { get; set; } = default!;
+    [Inject] private DesktopStateService State { get; set; } = default!;
+
+    protected override void OnInitialized() => Registry.Changed += OnChanged;
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    private void OnDesktopClick() => State.CloseAllMenus();
+
+    public void Dispose() => Registry.Changed -= OnChanged;
+}

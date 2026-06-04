@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\DesktopFramework.ServiceDefaults\DesktopFramework.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\DesktopFramework.Contracts\DesktopFramework.Contracts.csproj" />
+    <ProjectReference Include="..\DesktopFramework.Core\DesktopFramework.Core.csproj" />
+    <ProjectReference Include="..\DesktopFramework.Components\DesktopFramework.Components.csproj" />
+    <ProjectReference Include="..\DesktopFramework.SampleApps\DesktopFramework.SampleApps.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+  </PropertyGroup>
+
+</Project>

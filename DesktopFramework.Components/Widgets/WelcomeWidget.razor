@@ -1,0 +1,30 @@
+@* Desktop widget bound to GET /api/content/welcome — proves API + service discovery. *@
+
+@if (_content is not null)
+{
+    <div class="wos-widget">
+        <h3>@_content.Title</h3>
+        <p>@_content.Body</p>
+    </div>
+}
+
+@code {
+    [Inject] private IDesktopContentService Content { get; set; } = default!;
+
+    private ContentDto? _content;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Skip the HTTP call during prerender; fetch once the circuit is interactive.
+        if (!RendererInfo.IsInteractive) return;
+
+        try
+        {
+            _content = await Content.GetWelcomeAsync();
+        }
+        catch
+        {
+            // API not reachable yet — widget simply stays hidden.
+        }
+    }
+}

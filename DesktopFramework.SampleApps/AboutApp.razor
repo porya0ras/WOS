@@ -1,0 +1,34 @@
+@* Sample app: renders about/system info fetched from the backend API. *@
+
+<div class="wos-app-pad">
+    @if (_content is null)
+    {
+        <p>Loading…</p>
+    }
+    else
+    {
+        <h2>@_content.Title</h2>
+        @if (!string.IsNullOrEmpty(_content.Html))
+        {
+            @((MarkupString)_content.Html)
+        }
+        else
+        {
+            <p>@_content.Body</p>
+        }
+    }
+</div>
+
+@code {
+    [Inject] private IDesktopContentService Content { get; set; } = default!;
+
+    private ContentDto? _content;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!RendererInfo.IsInteractive) return;
+
+        try { _content = await Content.GetAboutAsync(); }
+        catch { _content = new ContentDto { Key = "about", Title = "About", Body = "Content unavailable." }; }
+    }
+}

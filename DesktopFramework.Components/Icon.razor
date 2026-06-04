@@ -1,0 +1,22 @@
+@* Renders an icon. If Name looks like a Font Awesome class ("fa-solid fa-gear")
+   it emits an <i>; otherwise it falls back to rendering the raw text/emoji. *@
+
+@if (!string.IsNullOrWhiteSpace(Name))
+{
+    @if (Name.Contains("fa-"))
+    {
+        <i class="@Name @CssClass" aria-hidden="true"></i>
+    }
+    else
+    {
+        <span class="@CssClass">@Name</span>
+    }
+}
+
+@code {
+    /// <summary>A Font Awesome class string (e.g. "fa-solid fa-gear") or an emoji.</summary>
+    [Parameter] public string? Name { get; set; }
+
+    /// <summary>Extra CSS classes applied to the rendered element.</summary>
+    [Parameter] public string? CssClass { get; set; }
+}

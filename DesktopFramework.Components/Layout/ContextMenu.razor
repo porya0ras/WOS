@@ -1,0 +1,41 @@
+@* Reusable, data-driven right-click menu. Caller controls visibility and
+   screen position; supply Items (use ContextMenuItem.Separator for dividers). *@
+
+@if (Visible)
+{
+    <div class="wos-context"
+         style="left:@(X)px; top:@(Y)px;"
+         @onclick:stopPropagation="true">
+        @foreach (var item in Items)
+        {
+            if (item.IsSeparator)
+            {
+                <div class="wos-context__sep"></div>
+            }
+            else
+            {
+                <button class="wos-context__item" @onclick="() => Select(item)">
+                    @if (!string.IsNullOrEmpty(item.Icon))
+                    {
+                        <Icon Name="@item.Icon" />
+                    }
+                    <span>@item.Label</span>
+                </button>
+            }
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public double X { get; set; }
+    [Parameter] public double Y { get; set; }
+    [Parameter] public IReadOnlyList<ContextMenuItem> Items { get; set; } = [];
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private async Task Select(ContextMenuItem item)
+    {
+        item.Invoke?.Invoke();
+        await OnClose.InvokeAsync();
+    }
+}
