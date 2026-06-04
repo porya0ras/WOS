@@ -6,6 +6,8 @@ inside a movable, resizable, minimizable / maximizable window — like a Windows
 running in the browser, with a glass (acrylic) look, a taskbar, a start menu, notifications and
 theming.
 
+![WOS desktop](media/image.png)
+
 ## Demo
 
 <video src="media/file0.webm" controls width="100%"></video>
