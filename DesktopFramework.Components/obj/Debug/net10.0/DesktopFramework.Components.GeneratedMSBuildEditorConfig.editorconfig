@@ -50,6 +50,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = TGF5b3V0L05vdGlmaWNhdGlvbkFyZWEucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/home/haleh/Documents/My Projects/WOS/DesktopFramework.Components/Layout/NotificationToasts.razor]
+build_metadata.AdditionalFiles.TargetPath = TGF5b3V0L05vdGlmaWNhdGlvblRvYXN0cy5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/haleh/Documents/My Projects/WOS/DesktopFramework.Components/Layout/StartMenu.razor]
 build_metadata.AdditionalFiles.TargetPath = TGF5b3V0L1N0YXJ0TWVudS5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 

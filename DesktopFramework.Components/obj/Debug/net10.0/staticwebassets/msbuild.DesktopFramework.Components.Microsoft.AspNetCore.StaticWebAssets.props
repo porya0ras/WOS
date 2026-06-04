@@ -12,12 +12,12 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>kowlibjfpw</Fingerprint>
-      <Integrity>tOae4SagsdEsqXeui/z5fVRcMKjnkiiNQrgyiW4aZyc=</Integrity>
+      <Fingerprint>788s3knune</Fingerprint>
+      <Integrity>p7sKTDmovlYUiecuutTPvHh75YwJjv7lkW+hgAIhjac=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      <FileLength>12329</FileLength>
-      <LastWriteTime>Thu, 04 Jun 2026 20:19:07 GMT</LastWriteTime>
+      <FileLength>16124</FileLength>
+      <LastWriteTime>Thu, 04 Jun 2026 20:50:57 GMT</LastWriteTime>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\desktop-framework.css'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\js\window-interop.js'))">

@@ -57,6 +57,16 @@ public static class SampleAppRegistration
                 AllowMultipleInstances = true, // multi-instance demo
                 DefaultWindowOptions = new WindowOptions { InitialSize = new(480, 340) },
             },
+            new AppDescriptor
+            {
+                Id = "notifier",
+                Title = "Notification Demo",
+                Icon = "fa-solid fa-bell",
+                ComponentType = typeof(NotificationDemoApp),
+                Category = DesktopAppCategory.Utilities,
+                Order = 4,
+                DefaultWindowOptions = new WindowOptions { InitialSize = new(440, 320) },
+            },
         ]);
     }
 }

@@ -30,6 +30,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q3VzdG9tZXJBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/home/haleh/Documents/My Projects/WOS/DesktopFramework.SampleApps/NotificationDemoApp.razor]
+build_metadata.AdditionalFiles.TargetPath = Tm90aWZpY2F0aW9uRGVtb0FwcC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/haleh/Documents/My Projects/WOS/DesktopFramework.SampleApps/SettingsApp.razor]
 build_metadata.AdditionalFiles.TargetPath = U2V0dGluZ3NBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 

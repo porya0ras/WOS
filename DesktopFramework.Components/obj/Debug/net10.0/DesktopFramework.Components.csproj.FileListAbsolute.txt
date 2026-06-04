@@ -36,4 +36,4 @@
 /home/haleh/Documents/My Projects/WOS/DesktopFramework.Components/obj/Debug/net10.0/DesktopFramework.Components.pdb
 /home/haleh/Documents/My Projects/WOS/DesktopFramework.Components/obj/Debug/net10.0/ref/DesktopFramework.Components.dll
 /home/haleh/Documents/My Projects/WOS/DesktopFramework.Components/obj/Debug/net10.0/compressed/r5l01nu55l-{0}-rzesvlzp8d-rzesvlzp8d.gz
-/home/haleh/Documents/My Projects/WOS/DesktopFramework.Components/obj/Debug/net10.0/compressed/il4z91pxih-{0}-kowlibjfpw-kowlibjfpw.gz
+/home/haleh/Documents/My Projects/WOS/DesktopFramework.Components/obj/Debug/net10.0/compressed/il4z91pxih-{0}-788s3knune-788s3knune.gz

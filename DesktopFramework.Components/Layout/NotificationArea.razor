@@ -1,21 +1,43 @@
 @implements IDisposable
-@* Notification panel bound to GET /api/notifications. *@
+@* Notification panel. Items come from the client-side NotificationService;
+   click an item (or its ×) to dismiss it. Seeds from GET /api/notifications. *@
 
 @if (State.IsNotificationPanelOpen)
 {
     <div class="wos-notify" @onclick:stopPropagation="true">
-        <div class="wos-notify__title">Notifications</div>
-        <div class="wos-notify__list">
-            @if (_notifications.Count == 0)
+        <div class="wos-notify__header">
+            <span class="wos-notify__title">Notifications</span>
+            @if (Notifications.Count > 0)
             {
-                <p class="wos-notify__item-msg">No notifications.</p>
+                <button class="wos-notify__clear" @onclick="Notifications.Clear">Clear all</button>
             }
-            @foreach (var n in _notifications)
+        </div>
+
+        <div class="wos-notify__list">
+            @if (Notifications.Count == 0)
             {
-                <div class="wos-notify__item wos-notify__item--@n.Severity" @key="n.Id">
-                    <div class="wos-notify__item-title">@n.Title</div>
-                    <div class="wos-notify__item-msg">@n.Message</div>
-                </div>
+                <p class="wos-notify__empty">No notifications.</p>
+            }
+            else
+            {
+                @foreach (var n in Notifications.Notifications)
+                {
+                    <div class="wos-notify__item wos-notify__item--@n.Severity"
+                         @key="n.Id"
+                         title="Click to dismiss"
+                         @onclick="() => Notifications.Dismiss(n.Id)">
+                        <div class="wos-notify__item-body">
+                            <div class="wos-notify__item-title">@n.Title</div>
+                            <div class="wos-notify__item-msg">@n.Message</div>
+                        </div>
+                        <button class="wos-notify__dismiss"
+                                title="Dismiss"
+                                @onclick="() => Notifications.Dismiss(n.Id)"
+                                @onclick:stopPropagation="true">
+                            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                }
             }
         </div>
     </div>
@@ -23,24 +45,26 @@
 
 @code {
     [Inject] private DesktopStateService State { get; set; } = default!;
-    [Inject] private IDesktopContentService Content { get; set; } = default!;
+    [Inject] private NotificationService Notifications { get; set; } = default!;
 
-    private IReadOnlyList<NotificationDto> _notifications = [];
-    private bool _loaded;
-
-    protected override void OnInitialized() => State.Changed += OnStateChanged;
-
-    private async void OnStateChanged()
+    protected override void OnInitialized()
     {
-        // Lazy-load notifications the first time the panel opens.
-        if (State.IsNotificationPanelOpen && !_loaded)
-        {
-            _loaded = true;
-            try { _notifications = await Content.GetNotificationsAsync(); }
-            catch { /* API unavailable — show empty */ }
-        }
+        State.Changed += OnChanged;
+        Notifications.Changed += OnChanged;
+    }
+
+    private async void OnChanged()
+    {
+        // Lazily seed from the API the first time the panel opens.
+        if (State.IsNotificationPanelOpen)
+            await Notifications.EnsureSeededAsync();
+
         await InvokeAsync(StateHasChanged);
     }
 
-    public void Dispose() => State.Changed -= OnStateChanged;
+    public void Dispose()
+    {
+        State.Changed -= OnChanged;
+        Notifications.Changed -= OnChanged;
+    }
 }

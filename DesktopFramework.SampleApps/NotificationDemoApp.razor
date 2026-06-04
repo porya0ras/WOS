@@ -1,0 +1,40 @@
+@* Sample app: pushes notifications into the desktop's NotificationService.
+   Each click adds a notification that appears in the taskbar panel. *@
+
+<div class="wos-app-pad">
+    <h2>Notification Demo</h2>
+    <p>Click a button to push a notification. Open the bell in the taskbar to see it —
+       click a notification there to dismiss it.</p>
+
+    <div class="wos-demo-buttons">
+        <button class="wos-btn" @onclick='() => Send("info")'>
+            <i class="fa-solid fa-circle-info"></i> Info
+        </button>
+        <button class="wos-btn wos-btn--success" @onclick='() => Send("success")'>
+            <i class="fa-solid fa-circle-check"></i> Success
+        </button>
+        <button class="wos-btn wos-btn--warning" @onclick='() => Send("warning")'>
+            <i class="fa-solid fa-triangle-exclamation"></i> Warning
+        </button>
+        <button class="wos-btn wos-btn--error" @onclick='() => Send("error")'>
+            <i class="fa-solid fa-circle-xmark"></i> Error
+        </button>
+    </div>
+
+    <p class="wos-demo-count">Sent this session: <strong>@_sent</strong></p>
+</div>
+
+@code {
+    [Inject] private NotificationService Notifications { get; set; } = default!;
+
+    private int _sent;
+
+    private void Send(string severity)
+    {
+        _sent++;
+        Notifications.Add(
+            title: $"{char.ToUpper(severity[0])}{severity[1..]} #{_sent}",
+            message: $"Sample {severity} notification sent at {DateTime.Now:HH:mm:ss}.",
+            severity: severity);
+    }
+}

@@ -1,0 +1,62 @@
+@implements IDisposable
+@* Transient toasts shown bottom-right when a notification arrives. Each toast
+   stays briefly, then fades out (the notification itself remains in the list /
+   bell panel). Click a toast to dismiss it early. *@
+
+<div class="wos-toasts">
+    @foreach (var t in _toasts)
+    {
+        <div class="wos-toast wos-toast--@t.Notification.Severity @(t.Leaving ? "wos-toast--leaving" : null)"
+             @key="t.Id"
+             @onclick="() => Remove(t)">
+            <div class="wos-toast__title">@t.Notification.Title</div>
+            <div class="wos-toast__msg">@t.Notification.Message</div>
+        </div>
+    }
+</div>
+
+@code {
+    [Inject] private NotificationService Notifications { get; set; } = default!;
+
+    private const int VisibleMs = 3500;  // how long it lingers
+    private const int LeaveMs = 350;      // must match the fade-out animation
+
+    private readonly List<ToastItem> _toasts = [];
+
+    protected override void OnInitialized() => Notifications.Added += OnAdded;
+
+    private void OnAdded(NotificationDto notification)
+    {
+        var toast = new ToastItem(notification);
+        _toasts.Add(toast);
+        InvokeAsync(StateHasChanged);
+        _ = RunLifecycleAsync(toast);
+    }
+
+    private async Task RunLifecycleAsync(ToastItem toast)
+    {
+        await Task.Delay(VisibleMs);
+        if (!_toasts.Contains(toast)) return; // already dismissed by click
+
+        toast.Leaving = true;                  // trigger the fade-out animation
+        await InvokeAsync(StateHasChanged);
+
+        await Task.Delay(LeaveMs);
+        Remove(toast);
+    }
+
+    private void Remove(ToastItem toast)
+    {
+        if (_toasts.Remove(toast))
+            InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose() => Notifications.Added -= OnAdded;
+
+    private sealed class ToastItem(NotificationDto notification)
+    {
+        public Guid Id { get; } = Guid.NewGuid();
+        public NotificationDto Notification { get; } = notification;
+        public bool Leaving { get; set; }
+    }
+}

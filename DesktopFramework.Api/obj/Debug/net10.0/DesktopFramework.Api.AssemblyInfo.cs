@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DesktopFramework.Api")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6b8dc98a4826ddc5c4a1533b3cc2e0ef8cc9369a")]
 [assembly: System.Reflection.AssemblyProductAttribute("DesktopFramework.Api")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DesktopFramework.Api")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -361,23 +361,139 @@
     flex-direction: column;
     overflow: hidden;
 }
-.wos-notify__title { padding: 12px 14px; font-weight: 600; border-bottom: 1px solid var(--wos-window-border); }
+.wos-notify__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--wos-window-border);
+}
+.wos-notify__title { font-weight: 600; }
+.wos-notify__clear {
+    border: none;
+    background: transparent;
+    color: var(--wos-accent);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 4px 6px;
+    border-radius: var(--wos-radius-sm);
+}
+.wos-notify__clear:hover { background: var(--wos-menu-hover); }
 .wos-notify__list { overflow: auto; padding: 8px; }
+.wos-notify__empty { font-size: 12px; color: var(--wos-text-muted); padding: 16px; text-align: center; }
+
 .wos-notify__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
     padding: 10px;
     border-radius: var(--wos-radius-sm);
     border-left: 3px solid var(--wos-accent);
     background: var(--wos-window-bg);
     margin-bottom: 8px;
+    cursor: pointer;
+    transition: background .12s ease, transform .12s ease, opacity .12s ease;
 }
+.wos-notify__item:hover { background: var(--wos-menu-hover); transform: translateX(-2px); }
+.wos-notify__item:active { opacity: .6; }
 .wos-notify__item--success { border-left-color: #2e7d32; }
 .wos-notify__item--warning { border-left-color: #ed6c02; }
 .wos-notify__item--error   { border-left-color: #d32f2f; }
+.wos-notify__item-body { flex: 1; min-width: 0; }
 .wos-notify__item-title { font-weight: 600; font-size: 13px; }
 .wos-notify__item-msg { font-size: 12px; color: var(--wos-text-muted); }
+.wos-notify__dismiss {
+    border: none;
+    background: transparent;
+    color: var(--wos-text-muted);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 2px 6px;
+    border-radius: var(--wos-radius-sm);
+    opacity: 0;
+    transition: opacity .12s ease;
+}
+.wos-notify__item:hover .wos-notify__dismiss { opacity: 1; }
+.wos-notify__dismiss:hover { background: rgba(127, 127, 127, .2); color: var(--wos-text); }
+
+/* Bell badge */
+.wos-tray__btn--bell { position: relative; }
+.wos-tray__btn--bell .wos-tray__badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(25%, -25%);
+    min-width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    box-shadow: 0 0 0 2px var(--wos-taskbar-bg);
+}
+
+/* ---- Toasts (transient pop-ups) ---- */
+.wos-toasts {
+    position: absolute;
+    right: 12px;
+    bottom: calc(var(--wos-taskbar-height) + 12px);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9600;
+    pointer-events: none; /* clicks pass through gaps */
+}
+.wos-toast {
+    pointer-events: auto;
+    width: 300px;
+    padding: 12px 14px;
+    border-radius: var(--wos-radius);
+    background: var(--wos-menu-bg);
+    -webkit-backdrop-filter: var(--wos-glass-blur);
+    backdrop-filter: var(--wos-glass-blur);
+    border: 1px solid var(--wos-window-border);
+    border-left: 3px solid var(--wos-accent);
+    box-shadow: var(--wos-window-shadow);
+    color: var(--wos-text);
+    cursor: pointer;
+    animation: wos-toast-in .28s cubic-bezier(.2, .8, .2, 1);
+}
+.wos-toast--success { border-left-color: #2e7d32; }
+.wos-toast--warning { border-left-color: #ed6c02; }
+.wos-toast--error   { border-left-color: #d32f2f; }
+.wos-toast--leaving { animation: wos-toast-out .35s ease forwards; }
+.wos-toast__title { font-weight: 600; font-size: 13px; }
+.wos-toast__msg { font-size: 12px; color: var(--wos-text-muted); margin-top: 2px; }
+
+@keyframes wos-toast-in {
+    from { opacity: 0; transform: translateX(40px) scale(.97); }
+    to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes wos-toast-out {
+    from { opacity: 1; transform: translateX(0); max-height: 120px; margin-bottom: 0; }
+    to   { opacity: 0; transform: translateX(40px); max-height: 0; margin-bottom: -10px; }
+}
 
 /* ---- Widgets / app content helpers ---- */
 .wos-app-pad { padding: 16px; }
+
+/* Buttons usable inside app windows */
+.wos-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid var(--wos-window-border);
+    border-radius: var(--wos-radius-sm);
+    background: var(--wos-window-bg);
+    color: var(--wos-text);
+    cursor: pointer;
+    font-size: 13px;
+}
+.wos-btn:hover { background: var(--wos-menu-hover); }
+.wos-btn--success { border-left: 3px solid #2e7d32; }
+.wos-btn--warning { border-left: 3px solid #ed6c02; }
+.wos-btn--error   { border-left: 3px solid #d32f2f; }
+.wos-demo-buttons { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.wos-demo-count { font-size: 12px; color: var(--wos-text-muted); }
 .wos-widget {
     position: absolute;
     top: 24px;

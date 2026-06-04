@@ -26,8 +26,12 @@
         <button class="wos-tray__btn" title="Toggle theme" @onclick="ToggleTheme">
             <i class="fa-solid @(Theme.Current == DesktopTheme.Dark ? "fa-moon" : "fa-sun")" aria-hidden="true"></i>
         </button>
-        <button class="wos-tray__btn" title="Notifications" @onclick="State.ToggleNotificationPanel">
+        <button class="wos-tray__btn wos-tray__btn--bell" title="Notifications" @onclick="State.ToggleNotificationPanel">
             <i class="fa-solid fa-bell" aria-hidden="true"></i>
+            @if (Notifications.Count > 0)
+            {
+                <span class="wos-tray__badge">@Notifications.Count</span>
+            }
         </button>
         <div class="wos-tray__clock">
             <div>@DateTime.Now.ToString("HH:mm")</div>
@@ -40,12 +44,14 @@
     [Inject] private WindowManager Windows { get; set; } = default!;
     [Inject] private DesktopStateService State { get; set; } = default!;
     [Inject] private ThemeService Theme { get; set; } = default!;
+    [Inject] private NotificationService Notifications { get; set; } = default!;
 
     protected override void OnInitialized()
     {
         Windows.Changed += OnChanged;
         State.Changed += OnChanged;
         Theme.Changed += OnChanged;
+        Notifications.Changed += OnChanged;
     }
 
     private void OnChanged() => InvokeAsync(StateHasChanged);
@@ -66,5 +72,6 @@
         Windows.Changed -= OnChanged;
         State.Changed -= OnChanged;
         Theme.Changed -= OnChanged;
+        Notifications.Changed -= OnChanged;
     }
 }
