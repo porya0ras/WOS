@@ -6,7 +6,11 @@ inside a movable, resizable, minimizable / maximizable window — like a Windows
 running in the browser, with a glass (acrylic) look, a taskbar, a start menu, notifications and
 theming.
 
-<!-- Add a screenshot here, e.g. ![WOS desktop](docs/screenshot.png) -->
+## Demo
+
+<video src="media/file0.webm" controls width="100%"></video>
+
+> If the player above doesn't appear, watch it here: [media/file0.webm](media/file0.webm)
 
 ---
 
