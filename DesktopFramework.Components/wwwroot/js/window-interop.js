@@ -159,3 +159,28 @@ export function storageRemove(key) {
 export function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
 }
+
+// ---- Fullscreen (browser Fullscreen API) ----
+export function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen?.();
+    } else {
+        document.exitFullscreen?.();
+    }
+}
+
+export function isFullscreen() {
+    return !!document.fullscreenElement;
+}
+
+// Notifies .NET when fullscreen state changes (e.g. user pressed Esc / F11).
+export function initFullscreen(dotNetRef) {
+    const handler = () => dotNetRef.invokeMethodAsync('OnFullscreenChanged', !!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', handler);
+    document._wosFsCleanup = () => document.removeEventListener('fullscreenchange', handler);
+}
+
+export function disposeFullscreen() {
+    document._wosFsCleanup?.();
+    delete document._wosFsCleanup;
+}

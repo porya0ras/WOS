@@ -1,0 +1,60 @@
+@implements IAsyncDisposable
+@* Floating top-right control that toggles the browser's fullscreen mode.
+   Icon reflects the current state and stays in sync if the user exits with Esc/F11. *@
+
+<button class="wos-fullscreen-btn"
+        title="@(_isFullscreen ? "Exit full screen" : "Full screen")"
+        @onclick="ToggleAsync">
+    <i class="fa-solid @(_isFullscreen ? "fa-compress" : "fa-expand")" aria-hidden="true"></i>
+</button>
+
+@code {
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+    private IJSObjectReference? _module;
+    private DotNetObjectReference<FullscreenButton>? _ref;
+    private bool _isFullscreen;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        _module = await JS.InvokeAsync<IJSObjectReference>(
+            "import", "./_content/DesktopFramework.Components/js/window-interop.js");
+        _ref = DotNetObjectReference.Create(this);
+        await _module.InvokeVoidAsync("initFullscreen", _ref);
+
+        _isFullscreen = await _module.InvokeAsync<bool>("isFullscreen");
+        StateHasChanged();
+    }
+
+    private async Task ToggleAsync()
+    {
+        if (_module is not null)
+            await _module.InvokeVoidAsync("toggleFullscreen");
+    }
+
+    [JSInvokable]
+    public void OnFullscreenChanged(bool isFullscreen)
+    {
+        _isFullscreen = isFullscreen;
+        InvokeAsync(StateHasChanged);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (_module is not null)
+            {
+                await _module.InvokeVoidAsync("disposeFullscreen");
+                await _module.DisposeAsync();
+            }
+        }
+        catch (JSDisconnectedException) { }
+        finally
+        {
+            _ref?.Dispose();
+        }
+    }
+}

@@ -430,6 +430,29 @@
     box-shadow: 0 0 0 2px var(--wos-taskbar-bg);
 }
 
+/* ---- Fullscreen button (top-right corner overlay) ---- */
+.wos-fullscreen-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 8000;
+    width: 38px;
+    height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--wos-window-border);
+    border-radius: var(--wos-radius-sm);
+    background: var(--wos-menu-bg);
+    -webkit-backdrop-filter: var(--wos-glass-blur);
+    backdrop-filter: var(--wos-glass-blur);
+    box-shadow: var(--wos-window-shadow);
+    color: var(--wos-text);
+    font-size: 15px;
+    cursor: pointer;
+}
+.wos-fullscreen-btn:hover { background: var(--wos-menu-hover); }
+
 /* ---- Toasts (transient pop-ups) ---- */
 .wos-toasts {
     position: absolute;
@@ -496,7 +519,7 @@
 .wos-demo-count { font-size: 12px; color: var(--wos-text-muted); }
 .wos-widget {
     position: absolute;
-    top: 24px;
+    top: 64px; /* clears the fullscreen button in the top-right corner */
     right: 24px;
     width: 300px;
     background: rgba(255, 255, 255, .12);

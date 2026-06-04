@@ -1,0 +1,91 @@
+## .NET / Visual Studio .gitignore
+
+# Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Ll]og/
+[Ll]ogs/
+
+# .NET artifacts
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Build/restore caches
+.vs/
+*.binlog
+*.nupkg
+*.snupkg
+
+# MSBuild / Roslyn
+*.tlog
+*.cache
+*.dgspec.json
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+coverage*.json
+coverage*.xml
+coverage*.info
+[Cc]overage/
+
+# Publish / deployment
+*.[Pp]ublish.xml
+PublishScripts/
+publish/
+*.azurePubxml
+*.pubxml
+*.pubxml.user
+
+# ASP.NET / Blazor / static web assets
+**/wwwroot/dist/
+**/wwwroot/_framework/
+*.staticwebassets.*.json
+compiler/scaffolding/
+*.scss.css
+
+# .NET Aspire
+.aspire/
+
+# Node (for client tooling, if any)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# User-specific / IDE
+.idea/
+*.swp
+*~
+*.tmp
+
+# Rider
+.idea/
+*.sln.iml
+
+# Local secrets / settings
+*.local.json
+appsettings.*.Local.json
+secrets.json
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
