@@ -9,6 +9,7 @@ builder.Services.AddOpenApi();
 // In-memory content providers (v1 — no database).
 builder.Services.AddSingleton<AppContentProvider>();
 builder.Services.AddSingleton<NotificationProvider>();
+builder.Services.AddSingleton<AuthProvider>();
 
 // Allow the Blazor Web app to call the API from the browser if WASM is ever enabled.
 builder.Services.AddCors(options =>
@@ -30,5 +31,6 @@ api.MapAppsEndpoints();
 api.MapContentEndpoints();
 api.MapNotificationsEndpoints();
 api.MapDebugEndpoints();
+api.MapAuthEndpoints();
 
 app.Run();

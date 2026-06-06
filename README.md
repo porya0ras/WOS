@@ -36,6 +36,11 @@ theming.
 - ⛶ **Fullscreen** toggle button (top-right) using the browser Fullscreen API.
 - ⏳ **Busy/loading cursor** — `BusyService` flips the whole desktop to the OS wait cursor while
   async work runs (e.g. a slow API call).
+- 🔐 **Login + roles** — a configurable **two-step** sign-in (step 1: credentials → step 2:
+  pick **company** / **role**) that calls an auth API and stores the session in **sessionStorage**.
+  The whole flow is driven by `LoginFlowOptions`, so a project can disable step 2
+  (`EnableContextStep = false`) for a plain single-step login, or toggle/require each selector.
+  Apps can require roles (`AppDescriptor.RequiredRoles`) and are hidden for users who lack them.
 - 🛡️ **Resilient errors** — API failures (400/401/403/404/408/429/5xx, timeouts, network down)
   return as data and render a friendly in-window error panel with **Retry**; an `ErrorBoundary`
   around each window contains unexpected crashes to that window — the desktop never goes down.

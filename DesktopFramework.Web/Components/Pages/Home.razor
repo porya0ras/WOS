@@ -1,19 +1,52 @@
 @page "/"
 @rendermode InteractiveServer
+@implements IDisposable
+@using DesktopFramework.Components.Auth
 @using DesktopFramework.Components.Desktop
 @using DesktopFramework.Core.Services
 @using DesktopFramework.SampleApps
+@inject AuthService Auth
 @inject AppRegistry Registry
 
 <PageTitle>WOS — Web Desktop</PageTitle>
 
-<DesktopShell />
+@if (!_ready)
+{
+    <div class="wos-splash">
+        <span class="wos-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</span>
+    </div>
+}
+else if (!Auth.IsAuthenticated)
+{
+    <LoginScreen />
+}
+else
+{
+    <DesktopShell />
+}
 
 @code {
+    private bool _ready;
+
     protected override void OnInitialized()
     {
         // The Web project is the composition root: it registers the apps,
         // supplying each app's ComponentType (which the API catalog can't carry).
         Registry.RegisterSampleApps();
+        Auth.Changed += OnAuthChanged;
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+
+        // Restore a saved session from sessionStorage, then reveal login or desktop.
+        await Auth.RestoreAsync();
+        _ready = true;
+        StateHasChanged();
+    }
+
+    private void OnAuthChanged() => InvokeAsync(StateHasChanged);
+
+    public void Dispose() => Auth.Changed -= OnAuthChanged;
 }

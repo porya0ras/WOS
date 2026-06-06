@@ -44,6 +44,7 @@ public static class SampleAppRegistration
                 Category = DesktopAppCategory.System,
                 Order = 2,
                 AllowMultipleInstances = false, // single-instance demo
+                RequiredRoles = ["Admin"],      // role-gated: only visible to Admins
                 DefaultWindowOptions = new WindowOptions { InitialSize = new(440, 360) },
             },
             new AppDescriptor

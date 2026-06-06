@@ -21,6 +21,22 @@
                 }
             }
         </div>
+
+        @if (Auth.User is { } user)
+        {
+            <div class="wos-startmenu__user">
+                <div class="wos-startmenu__avatar"><i class="fa-solid fa-user"></i></div>
+                <div class="wos-startmenu__userinfo">
+                    <div class="wos-startmenu__username">@user.DisplayName</div>
+                    <div class="wos-startmenu__usermeta">
+                        @(user.CompanyName ?? "—")@(string.IsNullOrEmpty(user.RoleName) ? "" : $" · {user.RoleName}")
+                    </div>
+                </div>
+                <button class="wos-startmenu__signout" title="Sign out" @onclick="SignOutAsync">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </button>
+            </div>
+        }
     </div>
 }
 
@@ -28,8 +44,15 @@
     [Inject] private AppRegistry Registry { get; set; } = default!;
     [Inject] private WindowManager Windows { get; set; } = default!;
     [Inject] private DesktopStateService State { get; set; } = default!;
+    [Inject] private AuthService Auth { get; set; } = default!;
 
     private string _search = string.Empty;
+
+    private async Task SignOutAsync()
+    {
+        State.CloseAllMenus();
+        await Auth.LogoutAsync();
+    }
 
     protected override void OnInitialized()
     {

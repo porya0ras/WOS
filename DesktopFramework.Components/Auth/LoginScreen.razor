@@ -1,0 +1,202 @@
+@implements IDisposable
+@* Two-step sign-in, driven entirely by LoginFlowOptions so it's reusable per project:
+   Step 1 = credentials, Step 2 = company/role selection. Set
+   LoginFlowOptions.EnableContextStep = false to drop step 2 — this component then
+   only ever shows the credentials step and the session is finalized automatically. *@
+
+<div class="wos-login">
+    <div class="wos-login__card">
+        <div class="wos-login__brand">
+            <img src="_content/DesktopFramework.Components/img/start-logo.svg" alt="" class="wos-login__logo" />
+            <span>WOS</span>
+        </div>
+
+        @if (Options.HasContextStep)
+        {
+            <div class="wos-login__steps">
+                <span class="wos-login__step @(IsContextStage ? null : "is-active")">1</span>
+                <span class="wos-login__step-line"></span>
+                <span class="wos-login__step @(IsContextStage ? "is-active" : null)">2</span>
+            </div>
+        }
+
+        @if (!IsContextStage)
+        {
+            @* ---- Step 1: credentials ---- *@
+            <h1 class="wos-login__title">@Options.CredentialsTitle</h1>
+            <p class="wos-login__sub">@Options.CredentialsSubtitle</p>
+
+            <EditForm Model="_credentials" OnValidSubmit="AuthenticateAsync">
+                <div class="wos-field">
+                    <label>Username</label>
+                    <input class="wos-input" @bind="_credentials.Username" @bind:event="oninput"
+                           placeholder="e.g. admin" autocomplete="username" />
+                </div>
+                <div class="wos-field">
+                    <label>Password</label>
+                    <input class="wos-input" type="password" @bind="_credentials.Password" @bind:event="oninput"
+                           placeholder="••••••••" autocomplete="current-password" />
+                </div>
+
+                @if (_error is not null)
+                {
+                    <div class="wos-login__error"><i class="fa-solid fa-circle-exclamation"></i> @_error</div>
+                }
+
+                <button class="wos-login__submit" type="submit" disabled="@_busy">
+                    @if (_busy)
+                    {
+                        <i class="fa-solid fa-spinner fa-spin"></i><span>Please wait…</span>
+                    }
+                    else
+                    {
+                        <i class="fa-solid fa-arrow-right"></i>
+                        <span>@(Options.HasContextStep ? "Continue" : "Sign in")</span>
+                    }
+                </button>
+            </EditForm>
+        }
+        else
+        {
+            @* ---- Step 2: company / role ---- *@
+            <h1 class="wos-login__title">@Options.ContextTitle</h1>
+            <p class="wos-login__sub">@Options.ContextSubtitle</p>
+
+            <EditForm Model="_context" OnValidSubmit="CompleteAsync">
+                @if (Options.ShowCompanySelector && Auth.Challenge is { Companies.Count: > 0 })
+                {
+                    <div class="wos-field">
+                        <label>@Options.CompanyLabel @(Options.RequireCompany ? "*" : "")</label>
+                        <select class="wos-input" @bind="_context.CompanyId">
+                            <option value="">Select…</option>
+                            @foreach (var company in Auth.Challenge.Companies)
+                            {
+                                <option value="@company.Id">@company.Name</option>
+                            }
+                        </select>
+                    </div>
+                }
+
+                @if (Options.ShowRoleSelector && Auth.Challenge is { Roles.Count: > 0 })
+                {
+                    <div class="wos-field">
+                        <label>@Options.RoleLabel @(Options.RequireRole ? "*" : "")</label>
+                        <select class="wos-input" @bind="_context.RoleId">
+                            <option value="">Select…</option>
+                            @foreach (var role in Auth.Challenge.Roles)
+                            {
+                                <option value="@role.Id">@role.Name</option>
+                            }
+                        </select>
+                    </div>
+                }
+
+                @if (_error is not null)
+                {
+                    <div class="wos-login__error"><i class="fa-solid fa-circle-exclamation"></i> @_error</div>
+                }
+
+                <div class="wos-login__row">
+                    <button class="wos-login__back" type="button" @onclick="Back" disabled="@_busy">
+                        <i class="fa-solid fa-arrow-left"></i> Back
+                    </button>
+                    <button class="wos-login__submit" type="submit" disabled="@_busy">
+                        @if (_busy)
+                        {
+                            <i class="fa-solid fa-spinner fa-spin"></i><span>Signing in…</span>
+                        }
+                        else
+                        {
+                            <i class="fa-solid fa-right-to-bracket"></i><span>Sign in</span>
+                        }
+                    </button>
+                </div>
+            </EditForm>
+        }
+
+        <p class="wos-login__hint">Demo: any username/password works. Pick a role to see role-based apps.</p>
+    </div>
+</div>
+
+@code {
+    [Inject] private AuthService Auth { get; set; } = default!;
+
+    private LoginFlowOptions Options => Auth.Options;
+    private bool IsContextStage => Auth.Stage == AuthStage.AwaitingContext;
+
+    private readonly Credentials _credentials = new();
+    private readonly Context _context = new();
+    private string? _error;
+    private bool _busy;
+
+    protected override void OnInitialized() => Auth.Changed += OnChanged;
+
+    private void OnChanged() => InvokeAsync(StateHasChanged);
+
+    private async Task AuthenticateAsync()
+    {
+        _error = null;
+        _busy = true;
+        try
+        {
+            var result = await Auth.AuthenticateAsync(_credentials.Username, _credentials.Password);
+            if (!result.IsSuccess)
+                _error = result.ErrorMessage ?? "Sign in failed.";
+            // On success: Auth raises Changed → either step 2 shows, or (single-step) the host swaps in the desktop.
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task CompleteAsync()
+    {
+        _error = null;
+
+        if (Options.RequireCompany && string.IsNullOrEmpty(_context.CompanyId))
+        {
+            _error = $"Please select a {Options.CompanyLabel.ToLowerInvariant()}.";
+            return;
+        }
+        if (Options.RequireRole && string.IsNullOrEmpty(_context.RoleId))
+        {
+            _error = $"Please select a {Options.RoleLabel.ToLowerInvariant()}.";
+            return;
+        }
+
+        _busy = true;
+        try
+        {
+            var result = await Auth.CompleteAsync(
+                string.IsNullOrEmpty(_context.CompanyId) ? null : _context.CompanyId,
+                string.IsNullOrEmpty(_context.RoleId) ? null : _context.RoleId);
+            if (!result.IsSuccess)
+                _error = result.ErrorMessage ?? "Sign in failed.";
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private void Back()
+    {
+        _error = null;
+        Auth.BackToCredentials();
+    }
+
+    public void Dispose() => Auth.Changed -= OnChanged;
+
+    private sealed class Credentials
+    {
+        public string Username { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+
+    private sealed class Context
+    {
+        public string? CompanyId { get; set; }
+        public string? RoleId { get; set; }
+    }
+}

@@ -155,6 +155,17 @@ export function storageRemove(key) {
     window.localStorage.removeItem(key);
 }
 
+// sessionStorage helpers used by SessionStoragePersistence (auth session).
+export function sessionGet(key) {
+    return window.sessionStorage.getItem(key);
+}
+export function sessionSet(key, value) {
+    window.sessionStorage.setItem(key, value);
+}
+export function sessionRemove(key) {
+    window.sessionStorage.removeItem(key);
+}
+
 // Applies the active theme to the root element.
 export function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
