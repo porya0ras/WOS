@@ -1,9 +1,18 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+
+    <IsPackable>true</IsPackable>
+    <PackageId>DesktopFramework.Contracts</PackageId>
+    <Title>WOS Web Desktop — Contracts</Title>
+    <Description>Shared DTOs (apps, content, notifications, auth) for the WOS Blazor web-desktop framework. Reference from your backend API and your Blazor app.</Description>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>

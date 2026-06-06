@@ -91,6 +91,91 @@ dotnet build WOS.slnx
 `Contracts ← api, web, core` · `Core ← Components, SampleApps, Web` ·
 `Components ← SampleApps, Web` · `SampleApps ← Web`.
 
+The **three framework libraries are published as NuGet packages**; the rest
+(`AppHost`, `Api`, `Web`, `SampleApps`, `ServiceDefaults`) are the runnable sample/host
+and are not packed.
+
+| Package | What it gives you |
+|---|---|
+| `DesktopFramework.Contracts` | The DTOs. Reference from your **backend API** and your app. |
+| `DesktopFramework.Core` | Windowing engine + services + interfaces (no Razor). Depends on Contracts. |
+| `DesktopFramework.Components` | Blazor UI + JS/CSS + default browser-storage. Depends on Core. **This is the one your app installs.** |
+
+---
+
+## Use it in your own Blazor app
+
+```bash
+dotnet add package DesktopFramework.Components
+```
+
+`Program.cs`:
+
+```csharp
+builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+builder.Services.AddDesktopFramework();   // windowing, UI, theming, browser storage — all wired
+```
+
+Reference the framework stylesheet in your host page (`App.razor` head) and Font Awesome:
+
+```html
+<link rel="stylesheet" href="@Assets["_content/DesktopFramework.Components/css/desktop-framework.css"]" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+```
+
+Register your apps and drop in the shell (an interactive component):
+
+```razor
+@rendermode InteractiveServer
+@inject AppRegistry Registry
+
+<DesktopShell />
+
+@code {
+    protected override void OnInitialized() =>
+        Registry.Register(new AppDescriptor
+        {
+            Id = "customers", Title = "Customers", Icon = "fa-solid fa-user",
+            ComponentType = typeof(CustomerPage), AllowMultipleInstances = true,
+        });
+}
+```
+
+It runs out-of-the-box with no backend (notifications empty, login reports "not configured").
+To connect a backend, register your own implementations — they override the defaults:
+
+```csharp
+builder.Services.AddScoped<IDesktopContentService, MyContentClient>(); // your API
+builder.Services.AddScoped<IAuthApiClient, MyAuthClient>();            // your API
+builder.Services.AddScoped<IPermissionService, PermissionService>();   // enable role gating
+```
+
+(See `DesktopFramework.Web/Services/*` and `DesktopFramework.Api` for working examples.)
+
+---
+
+## Packaging & publishing
+
+Package metadata is shared in `Directory.Build.props` (version, authors, license, repo).
+Only the three framework libraries set `<IsPackable>true</IsPackable>`.
+
+```bash
+# produces .nupkg + .snupkg for Contracts, Core and Components in ./artifacts
+dotnet pack WOS.slnx -c Release -o ./artifacts
+
+# publish (set your API key / source)
+dotnet nuget push "artifacts/*.nupkg" --source https://api.nuget.org/v3/index.json --api-key <KEY>
+```
+
+The Components package bundles its `wwwroot` as **static web assets**, so consumers get the
+JS/CSS automatically under `_content/DesktopFramework.Components/…`. Versions are kept in lockstep
+via the single `<Version>` in `Directory.Build.props`, and project references pack as matching
+package dependencies.
+
+> Before publishing to nuget.org: bump `<Version>`, set the real `RepositoryUrl` /
+> `PackageProjectUrl` in `Directory.Build.props`, and pick **globally-unique** package IDs
+> (e.g. a `YourCompany.` prefix) — the `DesktopFramework.*` IDs are placeholders.
+
 ---
 
 ## Core concepts

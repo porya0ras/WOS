@@ -4,8 +4,12 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
 
+    <IsPackable>true</IsPackable>
+    <PackageId>DesktopFramework.Components</PackageId>
+    <Title>WOS Web Desktop — Components</Title>
+    <Description>Blazor UI for the WOS web-desktop framework: desktop shell, movable/resizable windows, taskbar, start menu, notifications/toasts, login screen, theming (glass/acrylic), plus the JS interop and default browser-storage. Add this package and call AddDesktopFramework().</Description>
+  </PropertyGroup>
 
   <ItemGroup>
     <SupportedPlatform Include="browser" />
@@ -18,6 +22,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DesktopFramework.Core\DesktopFramework.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

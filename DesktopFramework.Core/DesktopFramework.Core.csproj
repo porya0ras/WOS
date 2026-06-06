@@ -1,4 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>true</IsPackable>
+    <PackageId>DesktopFramework.Core</PackageId>
+    <Title>WOS Web Desktop — Core</Title>
+    <Description>Core engine for the WOS Blazor web-desktop framework: window manager, app registry, z-index/state/theme/notification/auth services and their interfaces. No Razor — pair with DesktopFramework.Components for UI.</Description>
+  </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\DesktopFramework.Contracts\DesktopFramework.Contracts.csproj" />
@@ -8,10 +19,8 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>

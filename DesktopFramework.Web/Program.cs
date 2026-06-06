@@ -11,22 +11,19 @@ builder.AddServiceDefaults();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Framework core services (windowing, registry, theme, persistence orchestration).
+// Framework: windowing, registry, theme, notifications, auth orchestration, and the
+// default browser-storage seams (localStorage / sessionStorage).
 builder.Services.AddDesktopFramework();
 
-// Host-supplied implementations of the framework's seams.
-builder.Services.AddScoped<IDesktopPersistence, LocalStoragePersistence>();
-builder.Services.AddScoped<ISessionStore, SessionStoragePersistence>();
-
-// Authentication + role-based permissions (overrides the default AllowAll service).
-// Two-step login by default; set EnableContextStep = false for a single-step login.
+// Login flow config (two-step by default; set EnableContextStep = false for single-step).
 builder.Services.AddSingleton(new LoginFlowOptions
 {
     EnableContextStep = true,
     ShowCompanySelector = true,
     ShowRoleSelector = true,
 });
-builder.Services.AddScoped<AuthService>();
+
+// Enable role-based access (overrides the framework's default allow-all).
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 
 // Typed API client, resolved against the Aspire-discovered "api" service.
