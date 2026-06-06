@@ -67,6 +67,16 @@ public static class SampleAppRegistration
                 Order = 4,
                 DefaultWindowOptions = new WindowOptions { InitialSize = new(440, 320) },
             },
+            new AppDescriptor
+            {
+                Id = "dataloader",
+                Title = "Data Loader",
+                Icon = "fa-solid fa-cloud-arrow-down",
+                ComponentType = typeof(DataLoaderApp),
+                Category = DesktopAppCategory.Utilities,
+                Order = 5,
+                DefaultWindowOptions = new WindowOptions { InitialSize = new(460, 320) },
+            },
         ]);
     }
 }

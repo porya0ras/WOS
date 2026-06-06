@@ -72,6 +72,21 @@
     user-select: none;
 }
 
+/* Busy state: show the OS loading/wait cursor across the whole desktop. */
+.wos-shell--busy,
+.wos-shell--busy * {
+    cursor: wait !important;
+}
+
+/* Inline "loading…" helper for app windows. */
+.wos-loading {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--wos-text-muted);
+    font-size: 13px;
+}
+
 .wos-desktop {
     position: absolute;
     inset: 0 0 var(--wos-taskbar-height) 0;
@@ -223,6 +238,9 @@
 .wos-start-btn {
     height: 36px;
     min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border: none;
     border-radius: var(--wos-radius-sm);
     background: transparent;
@@ -231,6 +249,7 @@
     cursor: pointer;
 }
 .wos-start-btn:hover { background: var(--wos-menu-hover); }
+.wos-start-logo { width: 22px; height: 22px; display: block; }
 
 .wos-taskbar__items { display: flex; gap: 4px; flex: 1; overflow: hidden; }
 .wos-task {

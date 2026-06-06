@@ -3,7 +3,7 @@
    start menu, the notification panel and the taskbar; owns theme application
    and layout restore. *@
 
-<div class="wos-shell">
+<div class="wos-shell @(Busy.IsBusy ? "wos-shell--busy" : null)">
     <DesktopBackground />
     <FullscreenButton />
     <StartMenu />
@@ -15,11 +15,18 @@
 @code {
     [Inject] private ThemeService Theme { get; set; } = default!;
     [Inject] private WindowPersistenceService Persistence { get; set; } = default!;
+    [Inject] private BusyService Busy { get; set; } = default!;
     [Inject] private IJSRuntime JS { get; set; } = default!;
 
     private IJSObjectReference? _module;
 
-    protected override void OnInitialized() => Theme.Changed += OnThemeChanged;
+    protected override void OnInitialized()
+    {
+        Theme.Changed += OnThemeChanged;
+        Busy.Changed += OnBusyChanged;
+    }
+
+    private void OnBusyChanged() => InvokeAsync(StateHasChanged);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -49,6 +56,7 @@
     public async ValueTask DisposeAsync()
     {
         Theme.Changed -= OnThemeChanged;
+        Busy.Changed -= OnBusyChanged;
         try
         {
             if (_module is not null) await _module.DisposeAsync();

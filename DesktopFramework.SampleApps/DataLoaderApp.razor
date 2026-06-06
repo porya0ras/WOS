@@ -1,0 +1,61 @@
+@* Sample app: loads data from a deliberately slow API endpoint
+   (GET /api/content/report, ~2.5s). While it loads, BusyService turns the whole
+   desktop cursor into the Windows-style loading cursor. *@
+
+<div class="wos-app-pad">
+    <h2>Data Loader</h2>
+    <p>Loads data from a slow API endpoint. While it fetches, the desktop cursor
+       turns into the loading cursor.</p>
+
+    <button class="wos-btn" @onclick="LoadAsync" disabled="@_loading">
+        <i class="fa-solid fa-cloud-arrow-down"></i> Load data
+    </button>
+
+    <div style="margin-top:16px;">
+        @if (_loading)
+        {
+            <span class="wos-loading">
+                <i class="fa-solid fa-spinner fa-spin"></i> Loading…
+            </span>
+        }
+        else if (_error)
+        {
+            <p style="color:#d32f2f;">Failed to load data.</p>
+        }
+        else if (_data is not null)
+        {
+            <h3>@_data.Title</h3>
+            <p>@_data.Body</p>
+            <small style="color:var(--wos-text-muted);">Fetched at @_data.UpdatedAt?.ToString("HH:mm:ss")</small>
+        }
+    </div>
+</div>
+
+@code {
+    [Inject] private IDesktopContentService Content { get; set; } = default!;
+    [Inject] private BusyService Busy { get; set; } = default!;
+
+    private bool _loading;
+    private bool _error;
+    private ContentDto? _data;
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        _error = false;
+
+        try
+        {
+            // Begin() shows the busy cursor for the whole desktop until disposed.
+            _data = await Busy.RunAsync(() => Content.GetReportAsync());
+        }
+        catch
+        {
+            _error = true;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+}

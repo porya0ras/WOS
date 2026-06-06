@@ -16,6 +16,14 @@ public static class ContentEndpoints
             provider.GetContent("about") is { } c ? Results.Ok(c) : Results.NotFound())
             .WithName("GetAboutContent");
 
+        // Deliberately slow endpoint so the desktop's loading cursor is visible.
+        group.MapGet("/report", async (AppContentProvider provider, CancellationToken ct) =>
+        {
+            await Task.Delay(2500, ct);
+            return Results.Ok(provider.GetReport());
+        })
+        .WithName("GetReport");
+
         return app;
     }
 }

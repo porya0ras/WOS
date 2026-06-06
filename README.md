@@ -34,6 +34,8 @@ theming.
   themes via CSS variables, persisted to `localStorage`.
 - 🆎 **Font Awesome 6 (free)** icons throughout (app icons are just FA class strings).
 - ⛶ **Fullscreen** toggle button (top-right) using the browser Fullscreen API.
+- ⏳ **Busy/loading cursor** — `BusyService` flips the whole desktop to the OS wait cursor while
+  async work runs (e.g. a slow API call).
 - 💾 **Persistence** — window layout (position/size/state/z-order) and theme survive reloads
   via `localStorage`, behind an `IDesktopPersistence` seam that can later move to a backend.
 - ☁️ **Aspire-native** — orchestration, service discovery, health, OpenTelemetry and resilient
@@ -145,8 +147,19 @@ target component's `[Parameter]` properties. Single-instance apps refocus instea
 multi-instance apps open separate windows (de-duped by `InstanceKey` when provided).
 
 The bundled sample apps are **Welcome**, **About**, **Settings** (single-instance), **Customers**
-(multi-instance with a `CustomerId` parameter) and **Notification Demo** — registered in
+(multi-instance with a `CustomerId` parameter), **Notification Demo**, and **Data Loader**
+(loads from a slow endpoint to show the busy cursor) — registered in
 `SampleApps/SampleAppRegistration.cs` and wired from `Web/Components/Pages/Home.razor`.
+
+### Showing the busy cursor during async work
+
+```csharp
+@inject BusyService Busy
+...
+_data = await Busy.RunAsync(() => Content.GetReportAsync());
+// Desktop shows the OS wait cursor for the whole duration; reference-counted,
+// so concurrent operations behave correctly.
+```
 
 ### Pushing a notification from an app
 

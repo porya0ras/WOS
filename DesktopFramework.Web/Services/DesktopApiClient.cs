@@ -23,6 +23,9 @@ public sealed class DesktopApiClient : IDesktopContentService
     public Task<ContentDto?> GetAboutAsync(CancellationToken ct = default) =>
         _http.GetFromJsonAsync<ContentDto>("/api/content/about", ct);
 
+    public Task<ContentDto?> GetReportAsync(CancellationToken ct = default) =>
+        _http.GetFromJsonAsync<ContentDto>("/api/content/report", ct);
+
     public async Task<IReadOnlyList<NotificationDto>> GetNotificationsAsync(CancellationToken ct = default) =>
         await _http.GetFromJsonAsync<List<NotificationDto>>("/api/notifications", ct) ?? [];
 }

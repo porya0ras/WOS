@@ -8,5 +8,8 @@ public interface IDesktopContentService
     Task<IReadOnlyList<DesktopAppDto>> GetAppsAsync(CancellationToken ct = default);
     Task<ContentDto?> GetWelcomeAsync(CancellationToken ct = default);
     Task<ContentDto?> GetAboutAsync(CancellationToken ct = default);
+
+    /// <summary>Calls the slow report endpoint (used to demo the loading cursor).</summary>
+    Task<ContentDto?> GetReportAsync(CancellationToken ct = default);
     Task<IReadOnlyList<NotificationDto>> GetNotificationsAsync(CancellationToken ct = default);
 }

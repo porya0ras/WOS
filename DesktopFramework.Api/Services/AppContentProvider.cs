@@ -38,4 +38,13 @@ public sealed class AppContentProvider
 
     public ContentDto? GetContent(string key) =>
         _content.TryGetValue(key, out var c) ? c : null;
+
+    /// <summary>Freshly generated "report" — served behind a deliberate delay (slow endpoint).</summary>
+    public ContentDto GetReport() => new()
+    {
+        Key = "report",
+        Title = "Sales Report",
+        Body = $"Loaded {Random.Shared.Next(120, 980)} records from the server at {DateTimeOffset.Now:HH:mm:ss}.",
+        UpdatedAt = DateTimeOffset.Now,
+    };
 }
