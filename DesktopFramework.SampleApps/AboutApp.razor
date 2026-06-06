@@ -1,20 +1,26 @@
-@* Sample app: renders about/system info fetched from the backend API. *@
+@* Sample app: renders about/system info fetched from the backend API,
+   with graceful error + retry handling. *@
 
 <div class="wos-app-pad">
-    @if (_content is null)
+    @if (_result is null)
     {
-        <p>Loading…</p>
+        <span class="wos-loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</span>
+    }
+    else if (!_result.IsSuccess)
+    {
+        <ApiError StatusCode="_result.StatusCode" Title="@_result.ErrorTitle"
+                  Message="@_result.ErrorMessage" OnRetry="LoadAsync" />
     }
     else
     {
-        <h2>@_content.Title</h2>
-        @if (!string.IsNullOrEmpty(_content.Html))
+        <h2>@_result.Value!.Title</h2>
+        @if (!string.IsNullOrEmpty(_result.Value.Html))
         {
-            @((MarkupString)_content.Html)
+            @((MarkupString)_result.Value.Html)
         }
         else
         {
-            <p>@_content.Body</p>
+            <p>@_result.Value.Body</p>
         }
     }
 </div>
@@ -22,13 +28,18 @@
 @code {
     [Inject] private IDesktopContentService Content { get; set; } = default!;
 
-    private ContentDto? _content;
+    private ApiResult<ContentDto>? _result;
 
     protected override async Task OnInitializedAsync()
     {
         if (!RendererInfo.IsInteractive) return;
+        await LoadAsync();
+    }
 
-        try { _content = await Content.GetAboutAsync(); }
-        catch { _content = new ContentDto { Key = "about", Title = "About", Body = "Content unavailable." }; }
+    private async Task LoadAsync()
+    {
+        _result = null;
+        StateHasChanged();
+        _result = await Content.GetAboutAsync();
     }
 }

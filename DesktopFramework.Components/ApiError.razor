@@ -1,0 +1,53 @@
+@* Reusable, friendly error card for failed API calls / app crashes.
+   Severity (color) is derived from the status code; layout is icon-badge + text
+   + Retry button. *@
+
+<div class="wos-api-error wos-api-error--@Severity">
+    <div class="wos-api-error__badge">
+        <i class="fa-solid @IconClass" aria-hidden="true"></i>
+    </div>
+
+    <div class="wos-api-error__body">
+        <div class="wos-api-error__title">@(Title ?? "Something went wrong")</div>
+        @if (!string.IsNullOrWhiteSpace(Message))
+        {
+            <div class="wos-api-error__msg">@Message</div>
+        }
+        @if (StatusCode is { } code)
+        {
+            <span class="wos-api-error__code">Error @(code)</span>
+        }
+    </div>
+
+    @if (OnRetry.HasDelegate)
+    {
+        <button class="wos-api-error__retry" @onclick="OnRetry">
+            <i class="fa-solid fa-rotate-right" aria-hidden="true"></i> Retry
+        </button>
+    }
+</div>
+
+@code {
+    [Parameter] public int? StatusCode { get; set; }
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Message { get; set; }
+    [Parameter] public EventCallback OnRetry { get; set; }
+
+    // Client errors look like warnings (amber); server/network/crash look severe (red).
+    private string Severity => StatusCode switch
+    {
+        400 or 401 or 403 or 404 or 408 or 429 => "warning",
+        _ => "error",
+    };
+
+    private string IconClass => StatusCode switch
+    {
+        404 => "fa-circle-question",
+        401 or 403 => "fa-lock",
+        408 or 429 => "fa-clock",
+        >= 400 and < 500 => "fa-circle-exclamation",
+        >= 500 => "fa-triangle-exclamation",
+        null => "fa-plug-circle-xmark",
+        _ => "fa-circle-exclamation",
+    };
+}

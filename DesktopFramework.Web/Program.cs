@@ -21,6 +21,11 @@ builder.Services.AddHttpClient<DesktopApiClient>(client =>
     client.BaseAddress = new Uri("https+http://api"));
 builder.Services.AddScoped<IDesktopContentService>(sp => sp.GetRequiredService<DesktopApiClient>());
 
+// Diagnostics client (used by the API Tester sample app).
+builder.Services.AddHttpClient<DiagnosticsApiClient>(client =>
+    client.BaseAddress = new Uri("https+http://api"));
+builder.Services.AddScoped<IDiagnosticsService>(sp => sp.GetRequiredService<DiagnosticsApiClient>());
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();

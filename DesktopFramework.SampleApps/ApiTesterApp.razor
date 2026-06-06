@@ -1,0 +1,80 @@
+@* Sample app to exercise the framework's error handling:
+   - Each status button hits /api/debug/status/{code} and shows the result.
+   - "Crash this app" throws so you can see the window's ErrorBoundary catch it
+     (the rest of the desktop keeps running). *@
+
+@if (_crash)
+{
+    // Throwing during render is reliably caught by the window's ErrorBoundary,
+    // so the crash stays inside this window — the desktop keeps running.
+    throw new InvalidOperationException("Boom! This is a simulated, unhandled app crash.");
+}
+
+<div class="wos-app-pad">
+    <h2>API Tester</h2>
+    <p>Trigger API responses and an app crash to see how errors are handled —
+       the desktop never goes down.</p>
+
+    <h4>API status responses</h4>
+    <div class="wos-demo-buttons">
+        <button class="wos-btn" @onclick="() => CallAsync(200)" disabled="@_loading">200 OK</button>
+        <button class="wos-btn wos-btn--warning" @onclick="() => CallAsync(400)" disabled="@_loading">400</button>
+        <button class="wos-btn wos-btn--warning" @onclick="() => CallAsync(404)" disabled="@_loading">404</button>
+        <button class="wos-btn wos-btn--error" @onclick="() => CallAsync(500)" disabled="@_loading">500</button>
+        <button class="wos-btn wos-btn--error" @onclick="() => CallAsync(503)" disabled="@_loading">503</button>
+    </div>
+
+    <div style="margin-top:12px; min-height:90px;">
+        @if (_loading)
+        {
+            <span class="wos-loading"><i class="fa-solid fa-spinner fa-spin"></i> Calling API…</span>
+        }
+        else if (_result is { IsSuccess: false })
+        {
+            <ApiError StatusCode="_result.StatusCode" Title="@_result.ErrorTitle"
+                      Message="@_result.ErrorMessage" OnRetry="RetryAsync" />
+        }
+        else if (_result?.Value is { } data)
+        {
+            <p style="color:#2e7d32;"><i class="fa-solid fa-circle-check"></i> @data.Title — @data.Body</p>
+        }
+    </div>
+
+    <hr style="border:none; border-top:1px solid var(--wos-window-border); margin:12px 0;" />
+
+    <h4>Unhandled crash</h4>
+    <p style="font-size:12px; color:var(--wos-text-muted);">
+        Throws an exception in this app — the window's ErrorBoundary catches it and offers Recover.
+    </p>
+    <button class="wos-btn wos-btn--error" @onclick="() => _crash = true">
+        <i class="fa-solid fa-bomb"></i> Crash this app
+    </button>
+</div>
+
+@code {
+    [Inject] private IDiagnosticsService Diagnostics { get; set; } = default!;
+    [Inject] private BusyService Busy { get; set; } = default!;
+
+    private bool _loading;
+    private bool _crash;
+    private int _lastCode = 200;
+    private ApiResult<ContentDto>? _result;
+
+    private async Task CallAsync(int statusCode)
+    {
+        _lastCode = statusCode;
+        _loading = true;
+        _result = null;
+
+        try
+        {
+            _result = await Busy.RunAsync(() => Diagnostics.RequestStatusAsync(statusCode));
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private Task RetryAsync() => CallAsync(_lastCode);
+}

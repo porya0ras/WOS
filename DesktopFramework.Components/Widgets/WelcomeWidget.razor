@@ -18,13 +18,9 @@
         // Skip the HTTP call during prerender; fetch once the circuit is interactive.
         if (!RendererInfo.IsInteractive) return;
 
-        try
-        {
-            _content = await Content.GetWelcomeAsync();
-        }
-        catch
-        {
-            // API not reachable yet — widget simply stays hidden.
-        }
+        // Decorative widget: on any failure it simply stays hidden.
+        var result = await Content.GetWelcomeAsync();
+        if (result.IsSuccess)
+            _content = result.Value;
     }
 }

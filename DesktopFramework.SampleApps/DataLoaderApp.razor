@@ -1,6 +1,7 @@
 @* Sample app: loads data from a deliberately slow API endpoint
    (GET /api/content/report, ~2.5s). While it loads, BusyService turns the whole
-   desktop cursor into the Windows-style loading cursor. *@
+   desktop cursor into the Windows-style loading cursor. API errors are shown
+   in-place with a Retry, never crashing the front end. *@
 
 <div class="wos-app-pad">
     <h2>Data Loader</h2>
@@ -18,15 +19,16 @@
                 <i class="fa-solid fa-spinner fa-spin"></i> Loading…
             </span>
         }
-        else if (_error)
+        else if (_result is { IsSuccess: false })
         {
-            <p style="color:#d32f2f;">Failed to load data.</p>
+            <ApiError StatusCode="_result.StatusCode" Title="@_result.ErrorTitle"
+                      Message="@_result.ErrorMessage" OnRetry="LoadAsync" />
         }
-        else if (_data is not null)
+        else if (_result?.Value is { } data)
         {
-            <h3>@_data.Title</h3>
-            <p>@_data.Body</p>
-            <small style="color:var(--wos-text-muted);">Fetched at @_data.UpdatedAt?.ToString("HH:mm:ss")</small>
+            <h3>@data.Title</h3>
+            <p>@data.Body</p>
+            <small style="color:var(--wos-text-muted);">Fetched at @data.UpdatedAt?.ToString("HH:mm:ss")</small>
         }
     </div>
 </div>
@@ -36,22 +38,17 @@
     [Inject] private BusyService Busy { get; set; } = default!;
 
     private bool _loading;
-    private bool _error;
-    private ContentDto? _data;
+    private ApiResult<ContentDto>? _result;
 
     private async Task LoadAsync()
     {
         _loading = true;
-        _error = false;
+        _result = null;
 
         try
         {
             // Begin() shows the busy cursor for the whole desktop until disposed.
-            _data = await Busy.RunAsync(() => Content.GetReportAsync());
-        }
-        catch
-        {
-            _error = true;
+            _result = await Busy.RunAsync(() => Content.GetReportAsync());
         }
         finally
         {

@@ -34,20 +34,16 @@ public sealed class NotificationService
         if (_seeded) return;
         _seeded = true;
 
-        try
-        {
-            var initial = await _content.GetNotificationsAsync(ct);
-            // Keep newest-first ordering.
-            foreach (var n in initial.OrderBy(n => n.Timestamp))
-                _items.Insert(0, n);
+        // Failures are returned as data — on error we simply start empty.
+        var result = await _content.GetNotificationsAsync(ct);
+        if (!result.IsSuccess || result.Value is not { Count: > 0 } initial)
+            return;
 
-            if (initial.Count > 0)
-                Changed?.Invoke();
-        }
-        catch
-        {
-            // API unavailable — start with an empty store.
-        }
+        // Keep newest-first ordering.
+        foreach (var n in initial.OrderBy(n => n.Timestamp))
+            _items.Insert(0, n);
+
+        Changed?.Invoke();
     }
 
     public void Add(NotificationDto notification)

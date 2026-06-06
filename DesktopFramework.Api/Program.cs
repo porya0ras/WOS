@@ -29,5 +29,6 @@ var api = app.MapGroup("/api");
 api.MapAppsEndpoints();
 api.MapContentEndpoints();
 api.MapNotificationsEndpoints();
+api.MapDebugEndpoints();
 
 app.Run();

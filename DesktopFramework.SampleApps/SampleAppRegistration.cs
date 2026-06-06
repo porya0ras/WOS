@@ -77,6 +77,16 @@ public static class SampleAppRegistration
                 Order = 5,
                 DefaultWindowOptions = new WindowOptions { InitialSize = new(460, 320) },
             },
+            new AppDescriptor
+            {
+                Id = "apitester",
+                Title = "API Tester",
+                Icon = "fa-solid fa-vial",
+                ComponentType = typeof(ApiTesterApp),
+                Category = DesktopAppCategory.Development,
+                Order = 6,
+                DefaultWindowOptions = new WindowOptions { InitialSize = new(500, 460) },
+            },
         ]);
     }
 }

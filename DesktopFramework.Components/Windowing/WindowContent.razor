@@ -1,14 +1,29 @@
 @* Hosts the app body via DynamicComponent, passing the launch parameters
-   (keys must match the target component's [Parameter] names — plan §10). *@
+   (keys must match the target component's [Parameter] names — plan §10).
+   An ErrorBoundary contains any unhandled crash to this window so the rest of
+   the desktop keeps running. *@
 
 <div class="wos-window__content">
-    <DynamicComponent Type="Window.ComponentType" Parameters="_parameters" @ref="_dynamic" />
+    <ErrorBoundary @ref="_boundary">
+        <ChildContent>
+            <DynamicComponent Type="Window.ComponentType" Parameters="_parameters" @ref="_dynamic" @key="_contentKey" />
+        </ChildContent>
+        <ErrorContent Context="ex">
+            <div class="wos-app-pad">
+                <ApiError Title="This app ran into a problem"
+                          Message="@ex.Message"
+                          OnRetry="Recover" />
+            </div>
+        </ErrorContent>
+    </ErrorBoundary>
 </div>
 
 @code {
     [Parameter, EditorRequired] public WindowInstance Window { get; set; } = default!;
 
     private DynamicComponent? _dynamic;
+    private ErrorBoundary? _boundary;
+    private object _contentKey = new();
     private Dictionary<string, object> _parameters = new();
 
     protected override void OnParametersSet()
@@ -22,5 +37,13 @@
         // Give IDesktopApp components a handle to their window.
         if (_dynamic?.Instance is IDesktopApp app && app.Window is null)
             app.Window = Window;
+    }
+
+    private void Recover()
+    {
+        // New key = a fresh component instance, so a crash triggered during render
+        // doesn't immediately re-throw after recovering.
+        _contentKey = new object();
+        _boundary?.Recover();
     }
 }

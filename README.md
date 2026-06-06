@@ -36,6 +36,9 @@ theming.
 - ⛶ **Fullscreen** toggle button (top-right) using the browser Fullscreen API.
 - ⏳ **Busy/loading cursor** — `BusyService` flips the whole desktop to the OS wait cursor while
   async work runs (e.g. a slow API call).
+- 🛡️ **Resilient errors** — API failures (400/401/403/404/408/429/5xx, timeouts, network down)
+  return as data and render a friendly in-window error panel with **Retry**; an `ErrorBoundary`
+  around each window contains unexpected crashes to that window — the desktop never goes down.
 - 💾 **Persistence** — window layout (position/size/state/z-order) and theme survive reloads
   via `localStorage`, behind an `IDesktopPersistence` seam that can later move to a backend.
 - ☁️ **Aspire-native** — orchestration, service discovery, health, OpenTelemetry and resilient
