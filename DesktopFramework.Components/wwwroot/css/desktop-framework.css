@@ -302,6 +302,28 @@
 }
 .wos-winbtn:hover { background: rgba(127, 127, 127, .2); }
 .wos-winbtn--close:hover { background: #e81123; color: #fff; }
+a.wos-winbtn { text-decoration: none; }
+
+/* ---- Standalone app page (window popped out to its own tab) ---- */
+.wos-standalone {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    background: var(--wos-window-bg);
+    color: var(--wos-text);
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+.wos-standalone__bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    font-weight: 600;
+    background: var(--wos-titlebar-bg);
+    border-bottom: 1px solid var(--wos-window-border);
+}
+.wos-standalone__body { flex: 1; overflow: auto; }
 
 .wos-window__content {
     flex: 1 1 auto;

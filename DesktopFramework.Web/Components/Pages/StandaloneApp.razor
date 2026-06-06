@@ -1,0 +1,41 @@
+@page "/app/{AppId}"
+@rendermode InteractiveServer
+@using DesktopFramework.Components
+@using DesktopFramework.Core.Services
+@using DesktopFramework.SampleApps
+@inject AppRegistry Registry
+
+<PageTitle>@(Descriptor?.Title ?? "App") — WOS</PageTitle>
+
+@if (Descriptor is null)
+{
+    <div class="wos-standalone">
+        <div class="wos-standalone__body wos-app-pad">
+            App "<strong>@AppId</strong>" was not found.
+        </div>
+    </div>
+}
+else
+{
+    <div class="wos-standalone">
+        <div class="wos-standalone__bar">
+            <Icon Name="@(Descriptor.Icon ?? "fa-solid fa-cube")" />
+            <span>@Descriptor.Title</span>
+        </div>
+        <div class="wos-standalone__body">
+            <DynamicComponent Type="Descriptor.ComponentType" />
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string AppId { get; set; } = "";
+
+    private DesktopFramework.Core.Apps.AppDescriptor? Descriptor => Registry.Get(AppId);
+
+    protected override void OnInitialized()
+    {
+        // New tab = new circuit with an empty registry; register the apps here too.
+        Registry.RegisterSampleApps();
+    }
+}

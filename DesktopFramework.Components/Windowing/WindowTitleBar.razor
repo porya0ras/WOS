@@ -9,6 +9,10 @@
     <span class="wos-window__title">@Window.Title</span>
 
     <div class="wos-window__buttons" data-wos-no-drag>
+        <a class="wos-winbtn" href="@($"app/{Window.AppId}")" target="_blank" rel="noopener"
+           title="Open in new tab" @onclick:stopPropagation="true">
+            <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
+        </a>
         @if (Window.Options.Minimizable)
         {
             <button class="wos-winbtn" title="Minimize" @onclick="() => Windows.Minimize(Window.Id)">
