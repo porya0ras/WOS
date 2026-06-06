@@ -1,6 +1,11 @@
-@* A launchable app shown on the desktop. Double-click (default) opens it. *@
+@implements IAsyncDisposable
+@* A launchable app on the desktop. Positioned on the icon grid; draggable, snapping
+   to the nearest free cell on drop. Double-click (or Enter/Space) opens it. *@
 
-<div class="wos-icon" tabindex="0"
+<div @ref="_element"
+     class="wos-icon"
+     style="left:@(X)px; top:@(Y)px;"
+     tabindex="0"
      @ondblclick="Open"
      @onkeydown="OnKeyDown"
      title="@App.Title">
@@ -10,7 +15,32 @@
 
 @code {
     [Parameter, EditorRequired] public AppDescriptor App { get; set; } = default!;
+    [Parameter] public double X { get; set; }
+    [Parameter] public double Y { get; set; }
+    [Parameter] public int CellW { get; set; }
+    [Parameter] public int CellH { get; set; }
+    [Parameter] public int OriginX { get; set; }
+    [Parameter] public int OriginY { get; set; }
+
     [Inject] private WindowManager Windows { get; set; } = default!;
+    [Inject] private DesktopIconLayout Layout { get; set; } = default!;
+    [Inject] private IJSRuntime JS { get; set; } = default!;
+
+    private ElementReference _element;
+    private IJSObjectReference? _module;
+    private DotNetObjectReference<DesktopIcon>? _ref;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        _module = await JS.InvokeAsync<IJSObjectReference>(
+            "import", "./_content/DesktopFramework.Components/js/window-interop.js");
+        _ref = DotNetObjectReference.Create(this);
+        await _module.InvokeVoidAsync("initIcon", _element, _ref, CellW, CellH, OriginX, OriginY);
+    }
+
+    [JSInvokable]
+    public void OnDropped(int col, int row) => Layout.Move(App.Id, new GridCell(col, row));
 
     private void Open() => Windows.OpenApp(App.Id);
 
@@ -18,5 +48,22 @@
     {
         if (e.Key is "Enter" or " ")
             Open();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            if (_module is not null)
+            {
+                await _module.InvokeVoidAsync("disposeIcon", _element);
+                await _module.DisposeAsync();
+            }
+        }
+        catch (JSDisconnectedException) { }
+        finally
+        {
+            _ref?.Dispose();
+        }
     }
 }

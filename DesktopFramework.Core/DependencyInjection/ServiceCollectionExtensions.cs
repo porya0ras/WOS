@@ -32,6 +32,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ZIndexManager>();
         services.AddScoped<WindowManager>();
         services.AddScoped<DesktopStateService>();
+        services.AddScoped<DesktopIconLayout>();
         services.AddScoped<BusyService>();
         services.AddScoped<NotificationService>();
         services.AddScoped<ThemeService>();

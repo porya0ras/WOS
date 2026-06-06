@@ -207,21 +207,17 @@
     overflow: hidden;
 }
 
-/* ---- Desktop icons ---- */
+/* ---- Desktop icons (snap-to-grid, draggable) ---- */
 .wos-icons {
     position: absolute;
     inset: 0;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    align-content: flex-start;
-    gap: 6px;
-    padding: 12px;
+    overflow: hidden;
 }
 
 .wos-icon {
-    width: 88px;
-    height: 88px;
+    position: absolute;
+    width: 84px;
+    height: 90px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -232,10 +228,18 @@
     color: var(--wos-icon-text);
     text-align: center;
     padding: 6px;
+    touch-action: none; /* let the pointer-drag handler own gestures */
+    user-select: none;
 }
 
 .wos-icon:hover { background: rgba(255, 255, 255, .15); }
 .wos-icon:focus-visible { outline: 2px solid var(--wos-accent); }
+.wos-icon.is-dragging {
+    z-index: 50;
+    opacity: .85;
+    cursor: grabbing;
+    background: rgba(255, 255, 255, .22);
+}
 .wos-icon__glyph { font-size: 32px; line-height: 1; }
 .wos-icon__label {
     font-size: 12px;

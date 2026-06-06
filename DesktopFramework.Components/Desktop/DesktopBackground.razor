@@ -1,12 +1,17 @@
 @implements IDisposable
-@* The wallpaper surface: hosts desktop icons, the welcome widget, and the
-   open windows. Clicking empty space closes transient menus. *@
+@* The wallpaper surface: hosts desktop icons (on a snap grid), the welcome widget,
+   and the open windows. Clicking empty space closes transient menus. *@
 
 <div class="wos-desktop" @onclick="OnDesktopClick">
     <div class="wos-icons">
         @foreach (var app in Registry.DesktopApps)
         {
-            <DesktopIcon @key="app.Id" App="app" />
+            var cell = Layout.GetCell(app.Id);
+            <DesktopIcon @key="app.Id"
+                         App="app"
+                         X="@(OriginX + cell.Col * CellW)"
+                         Y="@(OriginY + cell.Row * CellH)"
+                         CellW="CellW" CellH="CellH" OriginX="OriginX" OriginY="OriginY" />
         }
     </div>
 
@@ -16,14 +21,41 @@
 </div>
 
 @code {
+    // Grid metrics (icon is 88×88; cells leave a small gap).
+    private const int CellW = 96;
+    private const int CellH = 100;
+    private const int OriginX = 10;
+    private const int OriginY = 10;
+
     [Inject] private AppRegistry Registry { get; set; } = default!;
     [Inject] private DesktopStateService State { get; set; } = default!;
+    [Inject] private DesktopIconLayout Layout { get; set; } = default!;
 
-    protected override void OnInitialized() => Registry.Changed += OnChanged;
+    protected override void OnInitialized()
+    {
+        Registry.Changed += OnChanged;
+        Layout.Changed += OnChanged;
+    }
 
-    private void OnChanged() => InvokeAsync(StateHasChanged);
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await Layout.RestoreAsync();
+        Layout.EnsureAssigned(Registry.DesktopApps.Select(a => a.Id));
+    }
+
+    private void OnChanged()
+    {
+        // Assign cells for any newly visible apps, then re-render.
+        Layout.EnsureAssigned(Registry.DesktopApps.Select(a => a.Id));
+        InvokeAsync(StateHasChanged);
+    }
 
     private void OnDesktopClick() => State.CloseAllMenus();
 
-    public void Dispose() => Registry.Changed -= OnChanged;
+    public void Dispose()
+    {
+        Registry.Changed -= OnChanged;
+        Layout.Changed -= OnChanged;
+    }
 }

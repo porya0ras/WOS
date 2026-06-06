@@ -155,6 +155,61 @@ export function storageRemove(key) {
     window.localStorage.removeItem(key);
 }
 
+// ---- Desktop icon drag + snap-to-grid ----
+// Drags an icon freely while pressed, then reports the dropped grid cell to .NET,
+// which snaps it to the cell. A small threshold distinguishes a drag from a
+// click/double-click (so opening the app still works).
+export function initIcon(el, dotNetRef, cellW, cellH, originX, originY) {
+    if (!el || el._wosIconCleanup) return;
+    let startX, startY, originLeft, originTop, pressed = false, moved = false;
+
+    const onDown = (e) => {
+        if (e.button !== 0) return;
+        pressed = true;
+        moved = false;
+        startX = e.clientX;
+        startY = e.clientY;
+        originLeft = el.offsetLeft;
+        originTop = el.offsetTop;
+        el.setPointerCapture(e.pointerId);
+    };
+
+    const onMove = (e) => {
+        if (!pressed) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        if (!moved && Math.abs(dx) + Math.abs(dy) < 5) return; // threshold
+        moved = true;
+        el.classList.add('is-dragging');
+        el.style.left = Math.max(0, originLeft + dx) + 'px';
+        el.style.top = Math.max(0, originTop + dy) + 'px';
+    };
+
+    const onUp = (e) => {
+        if (!pressed) return;
+        pressed = false;
+        el.releasePointerCapture?.(e.pointerId);
+        if (!moved) return; // it was a click — let the dblclick handler open the app
+        el.classList.remove('is-dragging');
+        const col = Math.max(0, Math.round((el.offsetLeft - originX) / cellW));
+        const row = Math.max(0, Math.round((el.offsetTop - originY) / cellH));
+        dotNetRef.invokeMethodAsync('OnDropped', col, row);
+    };
+
+    el.addEventListener('pointerdown', onDown);
+    el.addEventListener('pointermove', onMove);
+    el.addEventListener('pointerup', onUp);
+    el._wosIconCleanup = () => {
+        el.removeEventListener('pointerdown', onDown);
+        el.removeEventListener('pointermove', onMove);
+        el.removeEventListener('pointerup', onUp);
+    };
+}
+
+export function disposeIcon(el) {
+    if (el && el._wosIconCleanup) { el._wosIconCleanup(); delete el._wosIconCleanup; }
+}
+
 // sessionStorage helpers used by SessionStoragePersistence (auth session).
 export function sessionGet(key) {
     return window.sessionStorage.getItem(key);
